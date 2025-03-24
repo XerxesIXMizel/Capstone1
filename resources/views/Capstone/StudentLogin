@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Login</title>
+  <link rel="stylesheet" href="StudentCSS.css">
+</head>
+<body>
+<header>
+<nav class="upper">
+		<a href="file:///C:/Users/admin/Desktop/Capstone/Student%20Login/Student%20login.html">
+		<img src="SPCClogo.png">
+		</a>
+		<h4 style="text-align: center;">SPCC Student Portal</h4>
+</nav>
+</header>
+
+	<div class="login-container">
+	<div class="upperlogin">
+        <p style="text-align: center;"><img src="profile.png"></p>
+	</div>
+        <input type="text" placeholder="Email" />
+        <input type="password" placeholder="Password" />
+        <button class="Login">Login</button>
+        <p class="fpassword" style="text-align: center; margin-top: 10px;">Forgot password? <a class="rhere" href="#">Reset here</a></p>
+		<button class="Activate">Activate SPCC Account</button>
+	</div>
+	
+</body>
+</html>

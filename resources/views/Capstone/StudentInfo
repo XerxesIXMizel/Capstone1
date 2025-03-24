@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Information</title>
+    <link rel="stylesheet" href="StudentInfo.css">
+    <style>
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #search-bar {
+            padding: 8px;
+            font-size: 14px;
+            width: 400px;
+            margin-right: 10px;
+        }
+
+        #show-form-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Student Information</h1>
+</div>
+
+<div class="content">
+    <!-- Container for search bar and button -->
+    <div class="header-controls">
+        <!-- Search bar -->
+        <input type="text" id="search-bar" placeholder="Search for students..." onkeyup="searchStudents()">
+
+        <!-- Button to show the Add New Student form (popup) -->
+        <button id="show-form-btn" onclick="toggleForm()">Add New Student</button>
+    </div>
+
+    <!-- Table to display student information -->
+    <table id="student-table">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Student No.</th>
+                <th>Email Address</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Last Name</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table rows will go here -->
+        </tbody>
+    </table>
+</div>
+
+<!-- The Modal -->
+<div id="form-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="toggleForm()">&times;</span>
+        <h2 id="form-title">Add New Student</h2>
+        <form id="student-form">
+            <input type="hidden" id="edit-id"> <!-- Hidden field to store the student ID for editing -->
+            <label for="student-no">Student No.:</label>
+            <input type="text" id="student-no" required><br>
+
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" required><br>
+
+            <label for="first-name">First Name:</label>
+            <input type="text" id="first-name" required><br>
+
+            <label for="middle-name">Middle Name:</label>
+            <input type="text" id="middle-name"><br>
+
+            <label for="last-name">Last Name:</label>
+            <input type="text" id="last-name" required><br>
+
+            <label for="status">Status:</label>
+            <select id="status">
+                <option value="Regular">Regular</option>
+                <option value="Irregular">Irregular</option>
+            </select><br>
+
+            <button type="submit" id="form-submit-btn">Add Student</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Data for student records
+    const students = [];
+
+    // Function to render the student table
+function renderTable(filteredStudents = students) {
+    const tableBody = document.querySelector("#student-table tbody");
+    tableBody.innerHTML = ''; // Clear the table body before adding new rows
+
+    // Recompute dynamic index numbers for filtered students
+    filteredStudents.forEach((student, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${index + 1}</td> <!-- Recompute index -->
+            <td>${student.studentNo}</td>
+            <td>${student.email}</td>
+            <td>${student.firstName}</td>
+            <td>${student.middleName}</td>
+            <td>${student.lastName}</td>
+            <td>${student.status}</td>
+            <td>
+                <button onclick="editStudent(${student.no})">Edit</button>
+                <button onclick="deleteStudent(${student.no})">Delete</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+
+    // Display a message if no students are found
+    if (filteredStudents.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td colspan="8" style="text-align:center;">No records found</td>`;
+        tableBody.appendChild(row);
+    }
+}
+
+
+    // Function to add a new student or edit an existing one
+    document.getElementById('student-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Get form values
+        const studentNo = document.getElementById('student-no').value;
+        const email = document.getElementById('email').value;
+        const firstName = document.getElementById('first-name').value;
+        const middleName = document.getElementById('middle-name').value;
+        const lastName = document.getElementById('last-name').value;
+        const status = document.getElementById('status').value;
+        const studentId = document.getElementById('edit-id').value;
+
+        if (studentId) {  // Edit mode
+            // Find the student and update their details
+            const studentIndex = students.findIndex(student => student.no == studentId);
+            if (studentIndex !== -1) {
+                students[studentIndex] = {
+                    no: Number(studentId), // Convert to number
+                    studentNo,
+                    email,
+                    firstName,
+                    middleName,
+                    lastName,
+                    status
+                };
+            }
+        } else {  // Add new student mode
+            // Add new student to the array
+            const newStudent = {
+                no: students.length + 1, // Auto increment the "No."
+                studentNo,
+                email,
+                firstName,
+                middleName,
+                lastName,
+                status
+            };
+            students.push(newStudent);
+        }
+
+        renderTable(); // Re-render the table
+        document.getElementById('student-form').reset(); // Reset the form fields
+        document.getElementById('edit-id').value = ''; // Clear the edit ID
+        document.getElementById('form-title').innerText = 'Add New Student'; // Reset form title
+        document.getElementById('form-submit-btn').innerText = 'Add Student'; // Reset button text
+        toggleForm(); // Hide the modal after submission
+    });
+
+    // Function to delete a student
+   // Function to delete a student
+function deleteStudent(studentNo) {
+    const index = students.findIndex(student => student.no === studentNo);
+    if (index !== -1) {
+        students.splice(index, 1); // Remove the student from the array
+        renderTable(); // Re-render the table with updated student list
+    }
+}
+
+
+    // Function to edit a student
+    function editStudent(studentNo) {
+        const student = students.find(student => student.no === studentNo);
+        if (student) {
+            document.getElementById('form-title').innerText = 'Edit Student';
+            document.getElementById('edit-id').value = student.no;
+            document.getElementById('student-no').value = student.studentNo;
+            document.getElementById('email').value = student.email;
+            document.getElementById('first-name').value = student.firstName;
+            document.getElementById('middle-name').value = student.middleName;
+            document.getElementById('last-name').value = student.lastName;
+            document.getElementById('status').value = student.status;
+
+            document.getElementById('form-submit-btn').innerText = 'Update Student';
+            toggleForm(); // Show the modal
+        }
+    }
+
+    // Function to toggle the visibility of the form modal
+    function toggleForm() {
+        const modal = document.getElementById('form-modal');
+        modal.style.display = (modal.style.display === "block") ? "none" : "block";
+
+        if (modal.style.display === "none") {
+            document.getElementById('student-form').reset(); // Reset form fields when closing
+            document.getElementById('edit-id').value = ''; // Clear edit ID when closing
+            document.getElementById('form-title').innerText = 'Add New Student'; // Reset title
+            document.getElementById('form-submit-btn').innerText = 'Add Student'; // Reset button text
+        }
+    }
+
+    // Search function
+    function searchStudents() {
+        const query = document.getElementById('search-bar').value.toLowerCase();
+        const filteredStudents = students.filter(student => {
+            return (
+                student.studentNo.toLowerCase().includes(query) ||
+                student.email.toLowerCase().includes(query) ||
+                student.firstName.toLowerCase().includes(query) ||
+                student.middleName.toLowerCase().includes(query) ||
+                student.lastName.toLowerCase().includes(query) ||
+                student.status.toLowerCase().includes(query)
+            );
+        });
+        renderTable(filteredStudents); // Render the filtered students
+    }
+
+    // Initial rendering of the table
+    renderTable();
+
+    // Close the modal if the user clicks anywhere outside of it
+    window.onclick = function(event) {
+        const modal = document.getElementById('form-modal');
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
+</body>
+</html>

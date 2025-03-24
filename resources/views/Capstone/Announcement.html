@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcement</title>
+    <style>
+        .announcementbody {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .announcementcontainer {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .announcementform-group {
+            margin-bottom: 15px;
+        }
+
+        .announcementform-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .announcementform-group input, .announcementform-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .announcementform-group textarea {
+            resize: vertical;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .announcement {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #fdfdfd;
+        }
+
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .announcement-header h3 {
+            margin: 0;
+        }
+
+        .announcementactions button {
+            margin-left: 5px;
+            background-color: #28a745;
+        }
+
+        .announcementactions button.delete {
+            background-color: #dc3545;
+        }
+
+        .announcementactions button:hover {
+            opacity: 0.8;
+        }
+
+        .expired {
+            opacity: 0.6;
+            background-color: #f8d7da;
+        }
+
+        .announcementedit-section {
+            margin-top: 10px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+
+        .announcementedit-section input,
+        .announcementedit-section textarea {
+            margin-bottom: 10px;
+            width: calc(100% - 20px);
+            padding: 8px;
+        }
+
+        .announcementsearch-bar {
+            margin-bottom: 15px;
+        }
+
+        .announcementsearch-bar input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="announcementbody">
+    <div class="announcementcontainer">
+        <!-- Add Announcement Form -->
+        <div class="announcementform-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" placeholder="Enter announcement title">
+        </div>
+        <div class="announcementform-group">
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="Enter announcement description"></textarea>
+        </div>
+        <div class="announcementform-group">
+            <label for="deadline">Deadline</label>
+            <input type="datetime-local" id="deadline">
+        </div>
+        <button onclick="addAnnouncement()">Add Announcement</button>
+		
+		<br>
+		<br>
+		
+		        <!-- Search Bar -->
+        <div class="announcementsearch-bar">
+            <input type="text" id="search" placeholder="Search announcements..." onkeyup="filterAnnouncements()">
+        </div>
+
+
+        <!-- Announcements List -->
+        <div id="announcements"></div>
+    </div>
+
+    <script>
+        const announcements = [];
+
+        function addAnnouncement() {
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const deadline = document.getElementById('deadline').value;
+
+            if (!title || !description || !deadline) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const id = Date.now();
+            const announcement = { id, title, description, deadline };
+            announcements.push(announcement);
+
+            renderAnnouncements();
+            document.getElementById('title').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('deadline').value = '';
+        }
+
+        function renderAnnouncements(filtered = announcements) {
+            const announcementcontainer= document.getElementById('announcements');
+            announcementcontainer.innerHTML = '';
+            const now = new Date();
+
+            filtered.forEach((announcement) => {
+                const isExpired = new Date(announcement.deadline) < now;
+                const announcementDiv = document.createElement('div');
+                announcementDiv.className = `announcement ${isExpired ? 'expired' : ''}`;
+
+                announcementDiv.innerHTML = `
+                    <div class="announcement-header">
+                        <h3 id="title-${announcement.id}">${announcement.title}</h3>
+                        <div class="announcementactions">
+                            <button onclick="toggleEditSection(${announcement.id})">Edit</button>
+                            <button class="delete" onclick="deleteAnnouncement(${announcement.id})">Delete</button>
+                        </div>
+                    </div>
+                    <p id="description-${announcement.id}">${announcement.description}</p>
+                    <small>Deadline: <span id="deadline-text-${announcement.id}">${new Date(announcement.deadline).toLocaleString()}</span></small>
+                    <div class="announcementedit-section" id="announcementedit-section-${announcement.id}" style="display: none;">
+                        <input type="text" id="edit-title-${announcement.id}" value="${announcement.title}">
+                        <textarea id="edit-description-${announcement.id}">${announcement.description}</textarea>
+                        <input type="datetime-local" id="edit-deadline-${announcement.id}" value="${announcement.deadline}">
+                        <button onclick="saveChanges(${announcement.id})">Save</button>
+                        <button onclick="toggleEditSection(${announcement.id})">Cancel</button>
+                    </div>
+                `;
+
+                announcementcontainer.appendChild(announcementDiv);
+
+                if (isExpired) {
+                    setTimeout(() => deleteAnnouncement(announcement.id), 1000);
+                }
+            });
+        }
+
+        function toggleEditSection(id) {
+            const editSection = document.getElementById(`announcementedit-section-${id}`);
+            editSection.style.display = editSection.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function saveChanges(id) {
+            const title = document.getElementById(`edit-title-${id}`).value;
+            const description = document.getElementById(`edit-description-${id}`).value;
+            const deadline = document.getElementById(`edit-deadline-${id}`).value;
+
+            const announcement = announcements.find(a => a.id === id);
+            if (announcement) {
+                announcement.title = title;
+                announcement.description = description;
+                announcement.deadline = deadline;
+                renderAnnouncements();
+            }
+        }
+
+        function deleteAnnouncement(id) {
+            const index = announcements.findIndex(a => a.id === id);
+            if (index !== -1) {
+                announcements.splice(index, 1);
+                renderAnnouncements();
+            }
+        }
+
+        function filterAnnouncements() {
+            const searchQuery = document.getElementById('search').value.toLowerCase();
+            const filtered = announcements.filter(announcement =>
+                announcement.title.toLowerCase().includes(searchQuery) ||
+                announcement.description.toLowerCase().includes(searchQuery)
+            );
+            renderAnnouncements(filtered);
+        }
+    </script>
+</body>
+</html>

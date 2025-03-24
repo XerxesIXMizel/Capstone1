@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Report</title>
+    <style>
+	body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background: #f9f9f9;
+}
+
+#reportSummary {
+    margin-top: 20px;
+    padding: 10px;
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+p {
+    margin: 5px 0;
+}
+
+	</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Grade Report</h1>
+        <form id="gradeForm">
+            <div class="form-group">
+                <label for="subject">Subject:</label>
+                <input type="text" id="subject" name="subject" placeholder="Enter subject" required>
+            </div>
+            <div class="form-group">
+                <label for="score">Score:</label>
+                <input type="number" id="score" name="score" min="0" placeholder="Enter achieved score" required>
+            </div>
+            <div class="form-group">
+                <label for="highScore">High Score:</label>
+                <input type="number" id="highScore" name="highScore" min="1" placeholder="Enter maximum score" required>
+            </div>
+            <button type="button" id="addGrade">Add Grade</button>
+        </form>
+        <table id="gradeTable">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Score</th>
+                    <th>Percentage (%)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="reportSummary">
+            <p><strong>Total Percentage:</strong> <span id="totalPercentage">0</span>%</p>
+            <p><strong>Average Percentage:</strong> <span id="averagePercentage">0</span>%</p>
+        </div>
+    </div>
+    <script>
+	document.getElementById('addGrade').addEventListener('click', () => {
+    const subject = document.getElementById('subject').value.trim();
+    const score = parseFloat(document.getElementById('score').value);
+    const highScore = parseFloat(document.getElementById('highScore').value);
+
+    if (subject === '' || isNaN(score) || isNaN(highScore) || score < 0 || highScore <= 0 || score > highScore) {
+        alert('Please enter valid subject, score, and high score values.');
+        return;
+    }
+
+    // Calculate percentage
+    const percentage = ((score / highScore) * 100).toFixed(2);
+
+    // Add grade to the table
+    const tableBody = document.querySelector('#gradeTable tbody');
+    const row = tableBody.insertRow();
+    row.innerHTML = `
+        <td>${subject}</td>
+        <td>${score} / ${highScore}</td>
+        <td>${percentage}</td>
+    `;
+
+    // Clear input fields
+    document.getElementById('subject').value = '';
+    document.getElementById('score').value = '';
+    document.getElementById('highScore').value = '';
+
+    // Update summary
+    updateSummary();
+});
+
+function updateSummary() {
+    const percentages = Array.from(document.querySelectorAll('#gradeTable tbody tr td:nth-child(3)'))
+        .map(td => parseFloat(td.textContent));
+
+    const totalPercentage = percentages.reduce((sum, percentage) => sum + percentage, 0);
+    const averagePercentage = percentages.length > 0 ? (totalPercentage / percentages.length).toFixed(2) : 0;
+
+    document.getElementById('totalPercentage').textContent = totalPercentage.toFixed(2);
+    document.getElementById('averagePercentage').textContent = averagePercentage;
+}
+
+
+	</script>
+</body>
+</html>

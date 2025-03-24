@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curriculum Configuration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 45%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        form label, form select {
+            display: block;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        form button {
+            background-color: #1a73e8;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #0073e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <h1>Curriculum Configuration</h1>
+            <select id="schoolYear">
+                <option value="2024-2025">2024 - 2025</option>
+                <option value="2025-2026">2025 - 2026</option>
+                <option value="2026-2027">2026 - 2027</option>
+                <!-- More school years can be added here -->
+            </select>
+            <button>Set as Subject Curriculum</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Description</th>
+                        <th>Course Code</th>
+                        <th>Lecture</th>
+                        <th>Laboratory</th>
+                        <th>Units</th>
+                        <th>School Year</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Application Development and Emerging Technologies</td>
+                        <td>ADET</td>
+                        <td>2</td>
+                        <td>1</td>
+                        <td>3</td>
+                        <td><span id="schoolYearDisplay">2024-2025</span></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Analytics Modeling</td>
+                        <td>AnMod</td>
+                        <td>3</td>
+                        <td>1</td>
+                        <td>4</td>
+                        <td><span id="schoolYearDisplay">2024-2025</span></td>
+                    </tr>
+                    <!-- More rows can be added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('schoolYear').addEventListener('change', function() {
+            var selectedYear = this.value;
+            var rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(function(row) {
+                row.querySelectorAll('td:last-child span').forEach(function(cell) {
+                    cell.textContent = selectedYear;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

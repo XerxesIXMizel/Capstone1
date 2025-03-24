@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Logo Header</title>
+    <link rel="stylesheet" href="Mportal.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo-containerone">
+            <img src="SPCClogo.png" alt="Logo" class="logoone">
+            <h1 id="dynamic-title">Welcome to SPCC Portal</h1>
+        </div>
+    </div>
+    <div id="sidebarone" class="sidebarone">
+        <button class="toggle-btnone" onclick="toggleSidebarone()">☰</button>
+        <ul id="menu">
+            <li><a href="#" onclick="showSection('dashboard')">Dashboard</a></li>
+            <li><a href="#" onclick="showSection('student-info')">Student Info</a></li>
+            <li><a href="#" onclick="showSection('faculty-load')">Faculty Load</a></li>
+        </ul>
+    </div>
+    <div class="contentone">
+        <section id="dashboard" class="section active">
+            <h1>Dashboard</h1>
+            <p>Welcome to the Dashboard. Here is the main overview.</p>
+        </section>
+        <section id="student-info" class="section">
+            <h1>Student Info</h1>
+            <p>This section contains student information.</p>
+        </section>
+        <section id="faculty-load" class="section">
+            <h1>Faculty Load</h1>
+            <p>This section contains faculty load details.</p>
+        </section>
+    </div>
+
+    <script>
+        function toggleSidebarone() {
+            const sidebar = document.getElementById('sidebarone');
+            const menu = document.getElementById('menu');
+
+            // Toggle the visibility of the menu
+            menu.classList.toggle('hidden');
+
+            // Change button appearance
+            if (menu.classList.contains('hidden')) {
+                sidebarone.classList.add('collapsed');
+            } else {
+                sidebarone.classList.remove('collapsed');
+            }
+        }
+
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                if (section.id === sectionId) {
+                    section.classList.add('active');
+                    updateTitle(sectionId); // Update the dynamic title
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+        }
+
+        function updateTitle(sectionId) {
+            const titleMap = {
+                'dashboard': 'Dashboard',
+                'student-info': 'Student Info',
+                'faculty-load': 'Faculty Load'
+            };
+            const title = document.getElementById('dynamic-title');
+            title.textContent = titleMap[sectionId] || 'Welcome to SPCC Portal';
+        }
+    </script>
+</body>
+</html>

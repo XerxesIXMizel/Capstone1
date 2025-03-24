@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher's Evaluation Form</title>
+  <style>
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  border-radius: 8px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+input[type="text"], select, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+#resultMessage {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Teacher's Evaluation Form</h1>
+    <form id="evaluationForm">
+      <div class="form-group">
+        <label for="teacherName">Teacher's Name:</label>
+        <input type="text" id="teacherName" name="teacherName" required>
+      </div>
+      <div class="form-group">
+        <label for="subject">Subject Taught:</label>
+        <input type="text" id="subject" name="subject" required>
+      </div>
+      <div class="form-group">
+        <label for="effectiveness">Teacher's Effectiveness:</label>
+        <select id="effectiveness" name="effectiveness" required>
+          <option value="1">1 - Poor</option>
+          <option value="2">2 - Fair</option>
+          <option value="3">3 - Good</option>
+          <option value="4">4 - Very Good</option>
+          <option value="5">5 - Excellent</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="clarity">Clarity of Teaching:</label>
+        <select id="clarity" name="clarity" required>
+          <option value="1">1 - Poor</option>
+          <option value="2">2 - Fair</option>
+          <option value="3">3 - Good</option>
+          <option value="4">4 - Very Good</option>
+          <option value="5">5 - Excellent</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="communication">Communication Skills:</label>
+        <select id="communication" name="communication" required>
+          <option value="1">1 - Poor</option>
+          <option value="2">2 - Fair</option>
+          <option value="3">3 - Good</option>
+          <option value="4">4 - Very Good</option>
+          <option value="5">5 - Excellent</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="comments">Additional Comments:</label>
+        <textarea id="comments" name="comments" rows="4" placeholder="Any additional feedback?"></textarea>
+      </div>
+      <button type="submit">Submit Evaluation</button>
+    </form>
+    <div id="resultMessage"></div>
+  </div>
+
+  <script>
+  document.getElementById('evaluationForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  const teacherName = document.getElementById('teacherName').value;
+  const subject = document.getElementById('subject').value;
+  const effectiveness = document.getElementById('effectiveness').value;
+  const clarity = document.getElementById('clarity').value;
+  const communication = document.getElementById('communication').value;
+  const comments = document.getElementById('comments').value;
+
+  // Check if all required fields are filled
+  if (teacherName && subject && effectiveness && clarity && communication) {
+    const resultMessage = `Thank you for your evaluation of ${teacherName} teaching ${subject}. Here are your responses:\n
+                           Teacher's Effectiveness: ${effectiveness}\n
+                           Clarity of Teaching: ${clarity}\n
+                           Communication Skills: ${communication}\n
+                           Additional Comments: ${comments || 'None'}`;
+
+    document.getElementById('resultMessage').textContent = 'Evaluation Submitted Successfully!';
+    alert(resultMessage);
+  } else {
+    document.getElementById('resultMessage').textContent = 'Please fill in all required fields.';
+  }
+});
+
+  </script>
+</body>
+</html>
